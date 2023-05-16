@@ -139,7 +139,23 @@
         seats.push(i);
 
       }
+// 18과 19를 배열에서 제거
 
+        var indexToRemove = seats.indexOf(18);
+
+        if (indexToRemove > -1) {
+
+          seats.splice(indexToRemove, 1);
+
+        }
+
+        indexToRemove = seats.indexOf(19);
+
+        if (indexToRemove > -1) {
+
+          seats.splice(indexToRemove, 1);
+
+        }
       
 
       shuffleArray(seats); // 번호를 랜덤하게 섞음
