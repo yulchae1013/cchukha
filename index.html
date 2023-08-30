@@ -1,221 +1,96 @@
 <!DOCTYPE html>
-
 <html>
-
 <head>
-
-  <title>자리 뽑기 시스템</title>
-
+  <title>산들 1-3</title>
   <style>
-
     body {
-
-      font-family: Arial, sans-serif;
-
-      text-align: center;
-
-      margin: 20px;
-
-    }
-
-    
-
-    h1 {
-
-      color: #333;
-
-    }
-
-    
-
-    .seat-plan {
-
-      display: grid;
-
-      grid-template-columns: repeat(6, 1fr);
-
-      grid-gap: 10px;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-
-      padding: 20px;
-
-      background-color: #f2f2f2;
-
-      border: 1px solid #ccc;
-
-      border-radius: 5px;
-
-    }
-
-    
-
-    .seat {
-
       display: flex;
-
       justify-content: center;
-
       align-items: center;
-
-      height: 80px;
-
-      background-color: #fff;
-
-      border: 1px solid #ccc;
-
-      border-radius: 5px;
-
-      font-weight: bold;
-
+      height: 100vh;
+      margin: 0;
     }
 
+    .card {
+      width: 100px;
+      height: 150px;
+      background-color: lightgray;
+      border: 1px solid gray;
+      display: inline-block;
+      margin: 5px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 150px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .card.clicked {
+      background-color: white;
+    }
   </style>
-
 </head>
-
 <body>
-
-  <h1>자리 뽑기 시스템</h1>
-
-  
-
-  <div>
-
-    <label for="numOfPeople">인원 수:</label>
-
-    <input type="number" id="numOfPeople" min="1">
-
-    <button onclick="startSeatDrawing()">자리 뽑기</button>
-
-  </div>
-
-  
-
-  <div class="seat-plan hidden" id="seatPlan"></div>
-
-  
+  <label for="numCards">숫자:</label>
+  <input type="number" id="numCards" min="1" value="1">
+  <button onclick="drawCards()">자리뽑기</button>
+  <div id="cardContainer"></div>
 
   <script>
+    var names = [
+      "고은혜", "고현우", "권예솔", "김선우", "김승현", "김예인", "김혜중", "김태훈",
+      "남가현", "조동현", "명시하", "반우영", "김서율", "송영은", "송하운", "엄승리",
+      "정연우", "유원희", "윤정한", "석지민", "이예지", "이윤지", "이현서", "임지현",
+      "최환이", "유하은", "한윤성", "서현우", "이서진", "진홍명", "조은주", "황재윤",
+      "원준호", "이채율", "형지나"
+    ];
+    var availableNames = names.slice(); // Copy the array of names
 
-    function startSeatDrawing() {
+    function drawCards() {
+      var numCardsInput = document.getElementById("numCards");
+      var numCards = parseInt(numCardsInput.value, 10);
 
-      var numOfPeople = parseInt(document.getElementById('numOfPeople').value);
+      var cardContainer = document.getElementById("cardContainer");
+      cardContainer.innerHTML = ""; // Clear previous cards
 
-      if (!isNaN(numOfPeople) && numOfPeople > 0) {
+      var numPerRow = 6;
+      var numRows = Math.ceil(numCards / numPerRow);
 
-        document.getElementById('seatPlan').innerHTML = '';
+      for (var i = 0; i < numRows; i++) {
+        var rowDiv = document.createElement("div");
+        rowDiv.className = "row";
 
-        document.getElementById('seatPlan').classList.remove('hidden');
-
-        document.getElementById('seatPlan').textContent = '결과 계산중...';
-
-        setTimeout(function() {
-
-          generateSeatPlan(numOfPeople);
-
-        }, 3000);
-
-      }
-
-    }
-
-    
-
-    function generateSeatPlan(numOfPeople) {
-
-      var seatPlan = document.getElementById('seatPlan');
-
-      seatPlan.textContent = '';
-
-      
-
-      var seats = [];
-
-      for (var i = 1; i <= 36; i++) {
-
-        seats.push(i);
-
-      }
-// 18과 19를 배열에서 제거
-
-        var indexToRemove = seats.indexOf(18);
-
-        if (indexToRemove > -1) {
-
-          seats.splice(indexToRemove, 1);
-
-        }
-
-        indexToRemove = seats.indexOf(19);
-
-        if (indexToRemove > -1) {
-
-          seats.splice(indexToRemove, 1);
-
-        }
-      
-
-      shuffleArray(seats); // 번호를 랜덤하게 섞음
-
-      
-
-      var rows = Math.ceil(numOfPeople / 6); // 필요한 세로 줄 수 계산
-
-      var cols = Math.ceil(numOfPeople / rows); // 필요한 가로 줄 수 계산
-
-      
-
-      for (var j = 0; j < rows; j++) {
-
-        for (var k = 0; k < cols; k++) {
-
-          var seatIndex = j * cols + k;
-
-          if (seatIndex < numOfPeople) {
-
-            var seat = document.createElement('div');
-
-            seat.classList.add('seat');
-
-            seat.textContent = seats[seatIndex];
-
-            seatPlan.appendChild(seat);
-
+        for (var j = 0; j < numPerRow; j++) {
+          if (numCards <= 0) {
+            break; // Break if no more cards are left
           }
 
+          var cardDiv = document.createElement("div");
+          cardDiv.className = "card";
+          cardDiv.textContent = "카드";
+          cardDiv.addEventListener("click", function() {
+            changeCardText(this);
+          });
+          rowDiv.appendChild(cardDiv);
+
+          numCards--;
         }
 
+        cardContainer.appendChild(rowDiv);
       }
-
     }
 
-    
-
-    // 배열 요소를 랜덤하게 섞는 함수
-
-    function shuffleArray(array) {
-
-      for (var i = array.length - 1; i > 0; i--) {
-
-        var j = Math.floor(Math.random() * (i + 1));
-
-        var temp = array[i];
-
-        array[i] = array[j];
-
-        array[j] = temp;
-
+    function changeCardText(cardElement) {
+      if (availableNames.length === 0) {
+        cardElement.textContent = "더 이상 이름 없음";
+        return;
       }
 
+      var randomIndex = Math.floor(Math.random() * availableNames.length);
+      var selectedName = availableNames.splice(randomIndex, 1)[0];
+      cardElement.textContent = selectedName;
+      cardElement.classList.add("clicked");
     }
-
   </script>
-
-<div style="margin-top: 20px;">제작: 이채율</div>
-
 </body>
-
 </html>
